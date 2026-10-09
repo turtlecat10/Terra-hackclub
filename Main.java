@@ -8,6 +8,9 @@ public class Main {
     public static String file = "Uno.txt";
     public static int numPlayers;
     public static boolean running = true;
+    public static int direction = 1;
+    public static int selected = 0;
+    public static int turnOrder = 0;
     public static void clear(){
         System.out.print("\033[H\033[2J");
         System.out.flush();
@@ -19,10 +22,6 @@ public class Main {
         Setup.players(scanner);
         Setup.shuffle();
         Setup.hand();
-        // for(int i = 0; i < numPlayers; i++){
-        //     System.out.println(playerNames.get(i)+" "+hands.get(i)+" "+hands.get(i).size());
-        // }
-        // System.out.println(cards);
         while(running){
             Run.turn(scanner);
         }
