@@ -21,6 +21,8 @@ public class KeyListenerUno extends JFrame implements KeyListener{
             Run.enter();
         }else if(keyCode == KeyEvent.VK_1){
             Run.one();
+        }else if(keyCode == KeyEvent.VK_SPACE){
+            Run.space();
         }
     }
     @Override 
