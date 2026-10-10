@@ -2,7 +2,9 @@ import java.util.*;
 import java.util.concurrent.CountDownLatch;
 public class Run {
     public static CountDownLatch inputLatch;
+    public static CountDownLatch wildLatch;
     public static boolean turnFinished;
+    public static boolean wildFinished;
     public static boolean turnPassed = false;
     public static String draw()
     {
@@ -11,9 +13,12 @@ public class Run {
         return card;
     }
     public static void turn(Scanner turnScan){
+        if(Main.discard.get(0).charAt(0) != 'W'){
+            Main.colour = Main.discard.get(0).substring(0,1);
+        }
+        Main.wildTime = false;
         Main.clear();
         Main.selectedCards.clear();
-        KeyListenerUno listenerWindow = new KeyListenerUno();
         if(Main.turnOrder < 0){
             Main.turnOrder = Main.numPlayers-1;
         }else if(Main.turnOrder >= Main.numPlayers){
@@ -36,8 +41,15 @@ public class Run {
         turnFinished = false;
         while(!turnFinished){
             Main.clear();
-            System.out.println("Player: "+Main.playerNames.get(Main.turnOrder));
-            System.out.println("Top card: "+Main.discard.get(0));
+            for(int i = 0; i < Main.numPlayers; i++){
+                if(Main.turnOrder+i >= Main.numPlayers){
+                    System.out.print("Player:"+Main.playerNames.get(i-Main.turnOrder)+" Hand: "+Main.hands.get(i-Main.turnOrder).size()+", ");
+                }else{
+                    System.out.print("Player:"+Main.playerNames.get(Main.turnOrder+i)+" Hand: "+Main.hands.get(Main.turnOrder+i).size()+", ");
+                }
+            }
+            System.out.println("");
+            System.out.println("Top card: "+Main.discard.get(0)+" Colour: "+Main.colour);
             display();
             inputLatch = new CountDownLatch(1);
             try{
@@ -54,7 +66,14 @@ public class Run {
             inputLatch.countDown();
         }
     }
+    public static void releaseWild(){
+        if(wildLatch != null){
+            wildLatch.countDown();
+        }
+    }
     public static void display(){
+        System.out.println(Main.discard);
+        System.out.println(Main.tempDiscard);
         for(int l = 0; l < Main.hands.get(Main.turnOrder).size(); l++){
                 if(Main.selected == l){
                     if(Main.selectedCards.contains(l)){
@@ -87,8 +106,14 @@ public class Run {
             System.out.println("Press Space to select a card");
     }
     public static void enter(){
-        turnFinished = checkLegal();
-        releaseBlock();
+        if(!Main.wildTime){
+            turnFinished = checkLegal();
+            releaseBlock();
+        }else{
+            wildFinished = true;
+            releaseWild();
+        }
+        
     }
     public static void space(){
         if(Main.selected < Main.hands.get(Main.turnOrder).size()){
@@ -101,16 +126,30 @@ public class Run {
         releaseBlock();
     }
     public static void left(){
-        if(Main.selected != 0){
-            Main.selected--;
+        if(!Main.wildTime){
+            if(Main.selected != 0){
+                Main.selected--;
+            }
+            releaseBlock();
+        }else{
+            if(Main.wildSelected != 0){
+                Main.wildSelected--;
+            }
+            releaseWild();
         }
-        releaseBlock();
     }
     public static void right(){
-        if(Main.selected != Main.hands.get(Main.turnOrder).size()+1){
-            Main.selected++;
+        if(!Main.wildTime){
+            if(Main.selected != Main.hands.get(Main.turnOrder).size()+1){
+                Main.selected++;
+            }
+            releaseBlock();
+        }else{
+            if(Main.wildSelected != 3){
+                Main.wildSelected++;
+            }
+            releaseWild();
         }
-        releaseBlock();
     }
     public static void one(){
         turnPassed = false;
@@ -160,16 +199,80 @@ public class Run {
         return true;
     }
     public static void wild(){
+        wildFinished = false;
+        Main.wildTime = true;
+        while(!wildFinished){
+            Main.clear();
+            displayWild();
+            wildLatch = new CountDownLatch(1);
+            try{
+                wildLatch.await();
+            }catch (InterruptedException e){
+                e.printStackTrace();
+            }
+        }
+        switch (Main.wildSelected){
+            case 0:
+                Main.colour = "R";
+                break;
+            case 1:
+                Main.colour = "Y";
+                break;
+            case 2:
+                Main.colour = "G";
+                break;
+            case 3:
+                Main.colour = "B";
+                break;
+        }
 
     }
     public static void play(){
-        for(int i = 0; i < Main.selectedCards.size(); i++){
-            String cardPlayed = Main.hands.get(Main.turnOrder).get(Main.selectedCards.get(i));
-            Main.discard.add(0, cardPlayed);
-            Main.hands.get(Main.turnOrder).remove(cardPlayed);
+        if(Main.selected != Main.hands.get(Main.turnOrder).size()+1){
+            List<String> cardsRemove = new ArrayList<>();
+            for(int i = 0; i < Main.selectedCards.size(); i++){
+                int cardIndex = Main.selectedCards.get(i);
+                String cardPlayed = Main.hands.get(Main.turnOrder).get(cardIndex);
+                cardsRemove.add(cardPlayed);
+                Main.discard.add(0,cardPlayed);
+            }
+            for(String card : cardsRemove){
+                Main.hands.get(Main.turnOrder).remove(card);
+            }
+            Main.selectedCards.clear();
+            if(Main.discard.get(0).charAt(0) == 'W'){
+                wild();
+            }
         }
-        if(Main.discard.get(0).charAt(0) == 'W'){
-            wild();
+    }
+    public static void displayWild(){
+        System.out.println(Main.hands.get(Main.turnOrder));
+        for(int i = 0; i < 4; i++){
+            if(i == 0){
+                if(Main.wildSelected == 0){
+                    System.out.print("[Red], ");
+                }else{
+                    System.out.print("Red, ");
+                }
+            }else if(i == 1){
+                if(Main.wildSelected == 1){
+                    System.out.print("[Yellow], ");
+                }else{
+                    System.out.print("Yellow, ");
+                }
+            }else if(i == 2){
+                if(Main.wildSelected == 2){
+                    System.out.print("[Green], ");
+                }else{
+                    System.out.print("Green, ");
+                }
+            }else if(i == 3){
+                if(Main.wildSelected == 3){
+                    System.out.print("[Blue]");
+                }else{
+                    System.out.print("Blue");
+                }
+            }
         }
     }
 }

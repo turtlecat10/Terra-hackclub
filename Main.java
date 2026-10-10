@@ -16,7 +16,8 @@ public class Main {
     public static int selected = 0;
     public static int turnOrder = 0;
     public static int adding = 0;
-    public static String prevAdd = "";
+    public static int wildSelected = 0;
+    public static boolean wildTime = false;
     public static void clear(){
         System.out.print("\033[H\033[2J");
         System.out.flush();
@@ -28,6 +29,7 @@ public class Main {
         Setup.players(scanner);
         Setup.shuffle();
         Setup.hand();
+        KeyListenerUno listenerWindow = new KeyListenerUno();
         while(running){
             Run.turn(scanner);
         }

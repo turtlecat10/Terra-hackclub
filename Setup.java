@@ -63,6 +63,24 @@ public class Setup {
             }
         }
         Main.discard.add(Main.cards.get(0));
+        if(Main.discard.get(0).charAt(0) == 'W'){
+            Random random = new Random();
+            int randomNum = random.nextInt(4);
+            switch(randomNum){
+                case 0:
+                    Main.colour = "R";
+                    break;
+                case 1:
+                    Main.colour = "Y";
+                    break;
+                case 2:
+                    Main.colour = "G";
+                    break;
+                case 3:
+                    Main.colour = "B";
+                    break;
+            }
+        }
         Main.cards.remove(0);
     }
 }
