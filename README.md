@@ -22,7 +22,7 @@ How to Download and Setup
 Open your terminal or command prompt and run:
 ```bash
 git clone https://github.com
-cd Terra-hack-club
+cd Terra-hack-club.git
 ```
 *(Alternatively, click the green **Code** button on GitHub, select **Download ZIP**, and extract the contents to a folder on your computer).*
 
@@ -43,8 +43,6 @@ Step-by-Step Instructions:
    ```bash
    java Main
    ```
-
-*(Note: If the code relies on other companion Java files in the same directory, you can compile them all at once using `javac *.java` instead).*
 
 ---
 
