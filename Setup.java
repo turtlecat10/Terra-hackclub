@@ -83,4 +83,45 @@ public class Setup {
         }
         Main.cards.remove(0);
     }
+    public static String unoGame(){
+        Scanner scanning = new Scanner(System.in);
+        int number = 0;
+        while(true){
+            Main.clear();
+            System.out.println("Which game do you want to play?");
+            System.out.println("1 for standard, 2 for no mercy, 3 for uno all wild");
+            if(scanning.hasNextInt()){
+                number = scanning.nextInt();
+                if(number > 0 && number < 4){
+                    break;
+                }else{
+                    System.out.println("Please input a number from 1-3");
+                    try{
+                        Thread.sleep(1500);
+                    }catch(InterruptedException e){
+                        Thread.currentThread().interrupt();
+                    }
+                    Main.clear();
+                }
+            }else{
+                scanning.next();
+                System.out.println("Please input a valid integer");
+                try{
+                    Thread.sleep(1500);
+                }catch(InterruptedException e){
+                    Thread.currentThread().interrupt();
+                }
+                Main.clear();
+            }
+        }
+        switch (number){
+            case 1:
+                return (String) "Uno.txt";
+            case 2:
+                return (String) "UnoNoMercy.txt";
+            case 3:
+                return (String) "UnoAllWild.txt";
+        }
+        return "testing.txt";
+    }
 }

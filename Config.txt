@@ -1,0 +1,8 @@
+30 :MaxHand
+10 :MaxPlayers
+1 :RemainingPlayersNotWon
+0 :Stacking same symbol
+0 :stack+2On+2
+0 :stack+4On+2
+1 :stack+2On+2IfSameColour
+
