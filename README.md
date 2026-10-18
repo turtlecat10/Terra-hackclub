@@ -1,6 +1,6 @@
 # Terra-hackclub
 
-A text-based uno game written in Java. Play directly in your terminal (make sure that when another little window appears click it to be able to use arrow keys to move)
+A text-based uno game written in Java, choose between standard uno, uno no mercy and uno all wild. Play directly in your terminal (make sure that when another little window appears click it to be able to use arrow keys to move), using arrow keys to change which card/action you want to do, use space to select/deselect cards for play, and press enter to confirm action.
 
 ---
 
