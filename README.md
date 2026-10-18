@@ -22,7 +22,7 @@ How to Download and Setup
 Open your terminal or command prompt and run:
 ```bash
 git clone https://github.com
-cd Terra-hack-club.git
+cd Terra-hackclub.git
 ```
 *(Alternatively, click the green **Code** button on GitHub, select **Download ZIP**, and extract the contents to a folder on your computer).*
 
