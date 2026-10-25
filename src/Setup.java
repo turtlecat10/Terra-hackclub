@@ -1,10 +1,22 @@
+package src;
 import java.util.*;
 import java.io.*;
+
 public class Setup {
     public static void deck() throws IOException 
     {
-        FileReader fileReader = new FileReader(Main.file);
-        Scanner reader = new Scanner(fileReader);
+        // --- FIXED FOR EXECUTABLE PACKAGING ---
+        // Reads the file out of the packed .jar/.exe resource bundle instead of the disk file system
+        InputStream inputStream = Setup.class.getResourceAsStream(Main.file);
+
+        
+        if (inputStream == null) {
+            throw new FileNotFoundException("Could not find game configuration resource file: " + Main.file);
+        }
+        
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+        Scanner reader = new Scanner(bufferedReader);
+        
         while(reader.hasNextInt()){
             int numberOfCards = reader.nextInt();
             String cardType = reader.nextLine();
@@ -23,6 +35,7 @@ public class Setup {
         }
         reader.close();
     }
+
     public static void players(Scanner playerScan)
     {
         boolean loop = true;
@@ -51,10 +64,12 @@ public class Setup {
             Main.clear();
         }
     }
+
     public static void shuffle()
     {
         Collections.shuffle(Main.cards);
     }
+
     public static void hand()
     {
         for(int i = 0; i < Main.numPlayers; i++){
@@ -83,6 +98,7 @@ public class Setup {
         }
         Main.cards.remove(0);
     }
+
     public static String unoGame(){
         Scanner scanning = new Scanner(System.in);
         int number = 0;
@@ -116,11 +132,11 @@ public class Setup {
         }
         switch (number){
             case 1:
-                return (String) "Uno.txt";
+                return "Uno.txt";
             case 2:
-                return (String) "UnoNoMercy.txt";
+                return "UnoNoMercy.txt";
             case 3:
-                return (String) "UnoAllWild.txt";
+                return "UnoAllWild.txt";
         }
         return "testing.txt";
     }

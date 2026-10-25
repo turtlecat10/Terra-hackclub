@@ -1,3 +1,4 @@
+package src;
 import java.util.*;
 import java.io.*;
 public class Main {
@@ -35,8 +36,21 @@ public class Main {
     public static int target;
     public static boolean chosen;
     public static void clear(){
-        System.out.print("\033[H\033[2J");
-        System.out.flush();
+        try {
+            String os = System.getProperty("os.name").toLowerCase();
+            if (os.contains("windows")) {
+                // Windows packaged .exe clear execution fallback
+                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            } else {
+                // Standard Unix/Linux/macOS ANSI clear
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+            }
+        } catch (Exception e) {
+            // Safe fallback if environment stream is blocked
+            System.out.print("\033[H\033[2J");
+            System.out.flush();
+        }
     }
     public static void displayWinners(){
         clear();
@@ -45,22 +59,38 @@ public class Main {
         }
         System.out.println((order.size()+1)+": "+playerNames.get(0));
     }
+
     public static void displayLosers(){
         for(int i = 0; i < losers.size(); i++){
             System.out.println((order.size()+1+i)+": "+losers.get(i));
         }
     }
-    public static void main(String[] args) throws IOException
-    {
+
+    public static void main(String[] args) throws IOException {
+        // --- NATIVE PACKAGED WINDOWS CONSOLE ALLOCATION ---
+        // Forces a command window attach if the packaged .exe spawns as a detached GUI process
+        if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+            if (System.console() == null) {
+                try {
+                    // Re-opens and attaches a fresh CMD window to host the packaged app
+                    new ProcessBuilder("cmd", "/c", "echo Off && cls").inheritIO().start();
+                } catch (Exception e) {
+                    // Suppressed, fallback to standard stream
+                }
+            }
+        }
+
         Scanner scanner = new Scanner(System.in);
         Setup.deck();
         Setup.players(scanner);
         Setup.shuffle();
         Setup.hand();
         KeyListenerUno listenerWindow = new KeyListenerUno();
+        
         while(running){
             Run.turn(scanner);
         }
+        
         displayWinners();
         displayLosers();
         scanner.close();
